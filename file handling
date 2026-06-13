@@ -1,0 +1,215 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+
+      static Scanner sc = new Scanner(System.in);
+       static String[] name = new String[100];
+        static double[][] grade = new double[100][3];
+         static int count = 0;
+         static String file = "students.txt";
+
+       public static void main(String[] args) {
+
+             load();
+ 
+          while (true) {
+              
+              System.out.println("\nSTUDENT RECORD SYSTEM");
+              System.out.println("1. Add Record");
+              System.out.println("2. View Records");
+              System.out.println("3. Search Record");
+              System.out.println("4. Update Record");
+              System.out.println("5. Delete Record");
+              System.out.println("0. Exit");
+               
+                System.out.print("Enter a number: ");
+                   int ch = sc.nextInt();
+             sc.nextLine();
+              
+              if (ch == 1) add();
+            else if (ch == 2) view();
+            else if (ch == 3) search();
+            else if (ch == 4) update();
+            else if (ch == 5) delete();
+            else if (ch == 0) {
+                save();
+                System.out.println("Program exited.");
+                break;
+            } else {
+                System.out.println("Invalid choice!");
+            }
+        }
+    }
+
+    
+    static void load() {
+        try {
+            File f = new File(file);
+
+            if (!f.exists()) {
+                f.createNewFile();
+                return;
+            }
+
+            Scanner r = new Scanner(f);
+
+            while (r.hasNextLine()) {
+                String[] data = r.nextLine().split(",");
+
+                name[count] = data[0];
+
+                grade[count][0] = Double.parseDouble(data[1]);
+                grade[count][1] = Double.parseDouble(data[2]);
+                grade[count][2] = Double.parseDouble(data[3]);
+
+                count++;
+            }
+
+            r.close();
+
+        } catch (Exception e) {
+            System.out.println("File error!");
+        }
+    }
+
+    
+    static void save() {
+        try {
+            PrintWriter w = new PrintWriter(file);
+
+            for (int i = 0; i < count; i++) {
+                w.println(name[i] + "," +
+                          grade[i][0] + "," +
+                          grade[i][1] + "," +
+                          grade[i][2]);
+            }
+
+            w.close();
+
+        } catch (Exception e) {
+            System.out.println("File error!");
+        }
+    }
+    
+    static void add() {
+
+        System.out.print("Name: ");
+        name[count] = sc.nextLine();
+
+        System.out.print("Math: ");
+        grade[count][0] = sc.nextDouble();
+
+        System.out.print("English: ");
+        grade[count][1] = sc.nextDouble();
+
+        System.out.print("Science: ");
+        grade[count][2] = sc.nextDouble();
+
+        sc.nextLine();
+
+        count++;
+        save();
+
+        System.out.println("Record added!");
+    }
+
+    
+    static void view() {
+
+        if (count == 0) {
+            System.out.println("No records found.");
+            return;
+        }
+
+        for (int i = 0; i < count; i++) {
+            System.out.println("\nIndex: " + i);
+            System.out.println("Name: " + name[i]);
+            System.out.println("Math: " + grade[i][0]);
+            System.out.println("English: " + grade[i][1]);
+            System.out.println("Science: " + grade[i][2]);
+        }
+    }
+
+    
+    static void search() {
+
+        System.out.print("Enter name to search: ");
+        String s = sc.nextLine();
+
+        boolean found = false;
+
+        for (int i = 0; i < count; i++) {
+            if (name[i].equalsIgnoreCase(s)) {
+
+                System.out.println("\nFOUND RECORD:");
+                System.out.println("Name: " + name[i]);
+                System.out.println("Math: " + grade[i][0]);
+                System.out.println("English: " + grade[i][1]);
+                System.out.println("Science: " + grade[i][2]);
+
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Student not found.");
+        }
+    }
+
+    
+    static void update() {
+
+        view();
+
+        System.out.print("Enter index to update: ");
+        int i = sc.nextInt();
+        sc.nextLine();
+
+        if (i >= 0 && i < count) {
+
+            System.out.print("New Math: ");
+            grade[i][0] = sc.nextDouble();
+
+            System.out.print("New English: ");
+            grade[i][1] = sc.nextDouble();
+
+            System.out.print("New Science: ");
+            grade[i][2] = sc.nextDouble();
+
+            sc.nextLine();
+
+            save();
+            System.out.println("Record updated!");
+        } else {
+            System.out.println("Invalid index!");
+        }
+    }
+    
+    static void delete() {
+
+        view();
+
+        System.out.print("Enter index to delete: ");
+        int i = sc.nextInt();
+        sc.nextLine();
+
+        if (i >= 0 && i < count) {
+
+            for (int j = i; j < count - 1; j++) {
+                name[j] = name[j + 1];
+
+                for (int k = 0; k < 3; k++) {
+                    grade[j][k] = grade[j + 1][k];
+                }
+            }
+
+            count--;
+            save();
+
+            System.out.println("Record deleted!");
+        } else {
+            System.out.println("Invalid index!");
+        }
+    }
+}
